@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/userdash.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Available Quizzes</h2>
+
+        <ul th:if="${quizzes != null && !quizzes.isEmpty()}">
+            <li th:each="q : ${quizzes}">
+                <a th:href="@{/user/quiz/{id}(id=${q.id})}" th:text="${q.title}"></a>
+            </li>
+        </ul>
+
+        <!-- Empty state when no quizzes -->
+        <div th:if="${quizzes == null || quizzes.isEmpty()}" class="empty-state">
+            No quizzes available at the moment.<br>
+            Check back later!
+        </div>
+
+        <!-- Navigation links -->
+        <div class="nav-links">
+            <a th:href="@{/profile}">My Profile</a>
+            <a th:href="@{/login}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

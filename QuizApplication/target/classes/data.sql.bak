@@ -1,0 +1,32 @@
+-- Users
+INSERT INTO user (name, email, password, role) VALUES
+('Admin User', 'admin@example.com', 'admin123', 'ADMIN'),
+('John Doe', 'john@example.com', 'user123', 'USER'),
+('Jane Smith', 'jane@example.com', 'user123', 'USER');
+
+-- Categories
+INSERT INTO category (name) VALUES
+('Math'),
+('Science'),
+('General Knowledge');
+
+-- Quizzes
+INSERT INTO quiz (title, description, category_id) VALUES
+('Basic Math Quiz', 'Test your math skills!', 1),
+('Science Fundamentals', 'A quiz on basic science concepts', 2),
+('GK Starter Quiz', 'General knowledge questions for fun', 3);
+
+-- Questions for Math Quiz
+INSERT INTO question (text, option_a, option_b, option_c, option_d, correct_option, quiz_id) VALUES
+('What is 2 + 2?', '3', '4', '5', '6', 2, 1),
+('What is 5 x 3?', '8', '12', '15', '20', 3, 1);
+
+-- Questions for Science Quiz
+INSERT INTO question (text, option_a, option_b, option_c, option_d, correct_option, quiz_id) VALUES
+('What planet is known as the Red Planet?', 'Earth', 'Mars', 'Venus', 'Jupiter', 2, 2),
+('H2O is the chemical formula for?', 'Hydrogen', 'Oxygen', 'Water', 'Carbon Dioxide', 3, 2);
+
+-- Questions for GK Quiz
+INSERT INTO question (text, option_a, option_b, option_c, option_d, correct_option, quiz_id) VALUES
+('Who is the father of the nation of India?', 'Jawaharlal Nehru', 'Mahatma Gandhi', 'Sardar Patel', 'Bhagat Singh', 2, 3),
+('What is the capital of France?', 'Berlin', 'London', 'Paris', 'Madrid', 3, 3);

@@ -1,0 +1,211 @@
+/* auth.css - Premium glassmorphic login/signup */
+
+/* -------------------- Global reset & base -------------------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    flex-direction: column;
+    color: #fff;
+    overflow: hidden;
+    position: relative;
+}
+
+/* -------------------- Glassmorphic form container -------------------- */
+form {
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 2rem 2.5rem;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 10;
+}
+
+form:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 50px rgba(0, 0, 0, 0.25);
+}
+
+/* -------------------- Heading -------------------- */
+h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    position: relative;
+}
+
+/* -------------------- Standard labels and inputs -------------------- */
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 1rem 1rem;
+    font-size: 1rem;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+input:focus,
+select:focus {
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Select dropdown styling */
+select option {
+    background: #764ba2;
+    color: #fff;
+}
+
+/* -------------------- Buttons -------------------- */
+button {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #43cea2, #185a9d);
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    margin-top: 1rem;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    background: linear-gradient(135deg, #185a9d, #43cea2);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* -------------------- Error & Success Messages -------------------- */
+.error,
+p[style*="color:red"] {
+    color: #ff6b6b !important;
+    font-size: 0.9rem;
+    text-align: center;
+    margin: 1rem 0;
+    background: rgba(255, 107, 107, 0.1);
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.success {
+    color: #51cf66;
+    font-size: 0.9rem;
+    text-align: center;
+    margin: 1rem 0;
+    background: rgba(81, 207, 102, 0.1);
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(81, 207, 102, 0.3);
+}
+
+/* -------------------- Links -------------------- */
+p {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.85);
+    position: relative;
+    z-index: 10;
+}
+
+p a {
+    color: #43cea2;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+}
+
+p a:hover {
+    color: #fff;
+    background: rgba(67, 206, 162, 0.2);
+}
+
+/* -------------------- Subtle animated background -------------------- */
+body::before {
+    content: '';
+    position: fixed;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 20%, transparent 70%);
+    animation: rotateBG 60s linear infinite;
+    z-index: 1;
+    pointer-events: none;
+}
+
+@keyframes rotateBG {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* -------------------- Responsive tweaks -------------------- */
+@media (max-width: 480px) {
+    form {
+        padding: 1rem 1.5rem;
+        margin: 0.2rem;
+    }
+    h2 {
+        font-size: 1.4rem;
+        margin-bottom: 0.8rem;
+    }
+    input, 
+    select {
+        padding: 0.55rem;
+        font-size: 0.85rem;
+        margin-bottom: 0.6rem;
+    }
+    button {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
+}

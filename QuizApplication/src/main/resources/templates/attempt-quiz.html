@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${quiz.title}">Quiz</title>
+    <link rel="stylesheet" th:href="@{/css/quiz.css}">
+</head>
+<body>
+<div class="quiz-container">
+    <!-- Quiz Header -->
+    <div class="quiz-header">
+        <h2 th:text="${quiz.title}">Quiz Title</h2>
+        <p th:text="${quiz.description}">Quiz Description</p>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+    </div>
+
+    <!-- Quiz Form -->
+    <form class="quiz-form" th:action="@{/user/quiz/{id}/submit(id=${quiz.id})}" method="post">
+        <div th:each="question, iter : ${questions}" class="question">
+            <p class="question-text" th:text="${iter.index + 1} + '. ' + ${question.text}">Question text</p>
+
+            <div class="options">
+                <!-- Option A -->
+                <label class="option">
+                    <input type="radio" th:name="'answers[' + ${iter.index} + ']'" value="1"/>
+                    <span class="option-text" th:text="${question.optionA}">Option A</span>
+                </label>
+
+                <!-- Option B -->
+                <label class="option">
+                    <input type="radio" th:name="'answers[' + ${iter.index} + ']'" value="2"/>
+                    <span class="option-text" th:text="${question.optionB}">Option B</span>
+                </label>
+
+                <!-- Option C -->
+                <label class="option">
+                    <input type="radio" th:name="'answers[' + ${iter.index} + ']'" value="3"/>
+                    <span class="option-text" th:text="${question.optionC}">Option C</span>
+                </label>
+
+                <!-- Option D -->
+                <label class="option">
+                    <input type="radio" th:name="'answers[' + ${iter.index} + ']'" value="4"/>
+                    <span class="option-text" th:text="${question.optionD}">Option D</span>
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Submit Quiz</button>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const questions = document.querySelectorAll('.question');
+    const progressBar = document.getElementById('progressBar');
+
+    function updateProgress() {
+        let answeredCount = 0;
+        questions.forEach(q => {
+            const radios = q.querySelectorAll('input[type="radio"]');
+            if (Array.from(radios).some(r => r.checked)) answeredCount++;
+        });
+        progressBar.style.width = (answeredCount / questions.length * 100) + '%';
+    }
+
+    document.querySelectorAll('input[type="radio"]').forEach(r => {
+        r.addEventListener('change', updateProgress);
+        r.addEventListener('change', (e) => {
+            const questionDiv = e.target.closest('.question');
+            const next = questionDiv.nextElementSibling;
+            if(next) next.scrollIntoView({behavior: 'smooth', block: 'center'});
+        });
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/admindash.css}">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin Panel</h2>
+            </div>
+            
+            <button class="nav-btn active" onclick="showSection('categories')">
+                <span>Categories</span>
+                <span class="count-badge" th:text="${categories != null ? categories.size() : 0}">0</span>
+            </button>
+            
+            <button class="nav-btn" onclick="showSection('quizzes')">
+                <span>Quizzes</span>
+                <span class="count-badge" th:text="${quizzes != null ? quizzes.size() : 0}">0</span>
+            </button>
+            
+            <button class="nav-btn" onclick="showSection('questions')">
+                <span>Questions</span>
+                <span class="count-badge" th:text="${questions != null ? questions.size() : 0}">0</span>
+            </button>
+            
+            <button class="nav-btn" onclick="showSection('users')">
+                <span>Users</span>
+                <span class="count-badge" th:text="${users != null ? users.size() : 0}">0</span>
+            </button>
+        </div>
+
+        <div class="main-content">
+            <div class="main-header">
+                <h1>Quiz Management</h1>
+            </div>
+
+            <div id="categories-section" class="content-section active">
+                <h2>Categories</h2>
+                
+                <div class="form-container">
+                    <h3>Add New Category</h3>
+                    <form th:action="@{/admin/categories}" method="post">
+                        <div class="form-group">
+                            <input type="text" name="name" placeholder="Category Name" required>
+                            <button type="submit" class="btn btn-primary">Add Category</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="items-container">
+                    <h3>All Categories</h3>
+                    <div class="items-grid">
+                        <div class="item-card" th:each="category : ${categories}">
+                            <div class="item-header">
+                                <div class="item-title" th:text="${category.name}">Category Name</div>
+                            </div>
+                            <div class="item-actions">
+                                <form th:action="@{/admin/categories/{id}/delete(id=${category.id})}" method="post" style="display: inline;">
+                                    <input type="hidden" name="_method" value="delete">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this category?')">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="quizzes-section" class="content-section">
+                <h2>Quizzes</h2>
+                
+                <div class="form-container">
+                    <h3>Create New Quiz</h3>
+                    <form th:action="@{/admin/quizzes}" method="post">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <input type="text" name="title" placeholder="Quiz Title" required>
+                                <select name="categoryId" required>
+                                    <option value="">Select Category</option>
+                                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">Category</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <textarea name="description" placeholder="Quiz Description (optional)" rows="3"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Create Quiz</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="items-container">
+                    <h3>All Quizzes</h3>
+                    <div class="items-grid">
+                        <div class="item-card" th:each="quiz : ${quizzes}">
+                            <div class="item-header">
+                                <div class="item-title" th:text="${quiz.title}">Quiz Title</div>
+                                <div class="item-meta" th:text="'Category: ' + ${quiz.category.name}">Category: Sample</div>
+                                <div class="item-meta" th:text="'Questions: ' + ${quiz.questions != null ? quiz.questions.size() : 0}">Questions: 0</div>
+                            </div>
+                            <div class="item-actions">
+                                <button class="btn btn-secondary btn-sm" th:onclick="'showQuestions(' + ${quiz.id} + ')'">View Questions</button>
+                                <form th:action="@{/admin/quizzes/{id}/delete(id=${quiz.id})}" method="post" style="display: inline;">
+                                    <input type="hidden" name="_method" value="delete">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this quiz and all its questions?')">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="questions-section" class="content-section">
+                <h2>Questions</h2>
+                
+                <div class="form-container">
+                    <h3>Add New Question</h3>
+                    <form th:action="@{/admin/questions}" method="post" id="question-form">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <select name="quizId" id="quizSelect" required>
+                                    <option value="">Select Quiz</option>
+                                    <option th:each="quiz : ${quizzes}" th:value="${quiz.id}" th:text="${quiz.title + ' (' + quiz.category.name + ')'}">Quiz (Category)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <textarea name="questionText" placeholder="Enter your question here..." required rows="3"></textarea>
+                            </div>
+                            
+                            <div class="question-options">
+                                <h4 style="color: #43cea2; margin-bottom: 0.5rem;">Answer Options:</h4>
+                                <div class="option-row">
+                                    <input type="text" name="optionA" placeholder="Option A" required> 
+                                    <input type="radio" name="correctOption" value="1" id="correct1" required>
+                                    <label for="correct1">Correct Answer</label>
+                                </div>
+                                <div class="option-row">
+                                    <input type="text" name="optionB" placeholder="Option B" required> 
+                                    <input type="radio" name="correctOption" value="2" id="correct2">
+                                    <label for="correct2">Correct Answer</label>
+                                </div>
+                                <div class="option-row">
+                                    <input type="text" name="optionC" placeholder="Option C" required>
+                                    <input type="radio" name="correctOption" value="3" id="correct3">
+                                    <label for="correct3">Correct Answer</label>
+                                </div>
+                                <div class="option-row">
+                                    <input type="text" name="optionD" placeholder="Option D" required>
+                                    <input type="radio" name="correctOption" value="4" id="correct4">
+                                    <label for="correct4">Correct Answer</label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Add Question</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="items-container">
+                    <h3>All Questions</h3>
+                    <div class="items-grid">
+                        <div class="item-card" th:each="question : ${questions}">
+                            <div class="item-header">
+                                <div class="item-title" th:text="${question.text}">Question Text</div>
+                                <div class="item-meta" th:text="'Quiz: ' + ${question.quiz.title}">Quiz: Sample Quiz</div>
+                                <div class="item-meta" th:text="'Category: ' + ${question.quiz.category.name}">Category: Sample</div>
+                            </div>
+                            
+                            <div style="margin: 1rem 0; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                                <div style="margin-bottom: 0.5rem;">
+                                    <span th:text="'A) ' + ${question.optionA}" style="display: block; margin-bottom: 0.3rem; color: rgba(255,255,255,0.9);">Option 1</span>
+                                    <span th:text="'B) ' + ${question.optionB}" style="display: block; margin-bottom: 0.3rem; color: rgba(255,255,255,0.9);">Option 2</span>
+                                    <span th:text="'C) ' + ${question.optionC}" style="display: block; margin-bottom: 0.3rem; color: rgba(255,255,255,0.9);">Option 3</span>
+                                    <span th:text="'D) ' + ${question.optionD}" style="display: block; margin-bottom: 0.3rem; color: rgba(255,255,255,0.9);">Option 4</span>
+                                </div>
+                                <div style="color: #43cea2; font-weight: 600;">
+                                    <span th:text="'Correct Answer: ' + ${question.getAnswer()}">Correct Answer: Option 1</span>
+                                </div>
+                            </div>
+                            
+                            <div class="item-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="toggleEditQuestion(this)">Edit</button>
+                                <form th:action="@{/admin/questions/{id}/delete(id=${question.id})}" method="post" style="display: inline;">
+                                    <input type="hidden" name="_method" value="delete">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this question?')">Delete</button>
+                                </form>
+                            </div>
+                            
+                            <div class="edit-form">
+                                <form th:action="@{/admin/questions/{id}/update(id=${question.id})}" method="post">
+                                    <input type="hidden" name="_method" value="put">
+                                    <div class="form-column">
+                                        <div class="form-group">
+                                            <textarea name="questionText" th:text="${question.text}" required rows="3"></textarea>
+                                        </div>
+                                        
+                                        <div class="question-options">
+                                            <h4 style="color: #43cea2; margin-bottom: 0.5rem;">Answer Options:</h4>
+                                            <div class="option-row">
+                                                <input type="text" name="optionA" th:value="${question.optionA}" required>
+                                                <input type="radio" name="correctOption" value="1" th:checked="${question.correctOption == 1}">
+                                                <label style="font-size: 0.9rem; margin-left: 0.3rem; color: white;">Correct</label>
+                                            </div>
+                                            <div class="option-row">
+                                                <input type="text" name="optionB" th:value="${question.optionB}" required>
+                                                <input type="radio" name="correctOption" value="2" th:checked="${question.correctOption == 2}">
+                                                <label style="font-size: 0.9rem; margin-left: 0.3rem; color: white;">Correct</label>
+                                            </div>
+                                            <div class="option-row">
+                                                <input type="text" name="optionC" th:value="${question.optionC}" required>
+                                                <input type="radio" name="correctOption" value="3" th:checked="${question.correctOption == 3}">
+                                                <label style="font-size: 0.9rem; margin-left: 0.3rem; color: white;">Correct</label>
+                                            </div>
+                                            <div class="option-row">
+                                                <input type="text" name="optionD" th:value="${question.optionD}" required>
+                                                <input type="radio" name="correctOption" value="4" th:checked="${question.correctOption == 4}">
+                                                <label style="font-size: 0.9rem; margin-left: 0.3rem; color: white;">Correct</label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary btn-sm">Update Question</button>
+                                            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditQuestion(this)">Cancel</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="users-section" class="content-section">
+                <h2>Users</h2>
+                
+                <div class="items-container">
+                    <h3>All Users</h3>
+                    <div class="user-card" th:each="user : ${users}">
+                        <div class="item-header">
+                            <div class="item-title" th:text="${user.name}">User Name</div>
+                            <div class="item-meta" th:text="${user.email}">user@example.com</div>
+                        </div>
+                        
+                        <div class="item-actions">
+    <button class="btn btn-secondary btn-sm" onclick="toggleEdit(this)">Edit</button>
+    <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post" style="display: inline;">
+        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this user?')">Delete</button>
+    </form>
+</div>
+                        
+                        <div class="edit-form">
+    <form th:action="@{/admin/users/{id}/update(id=${user.id})}" method="post">
+        <input type="hidden" name="_method" value="put"> <div class="form-group">
+            <input type="text" name="name" th:value="${user.name}" placeholder="Name" required>
+            <input type="email" name="email" th:value="${user.email}" placeholder="Email" required>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEdit(this)">Cancel</button>
+        </div>
+    </form>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active from nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName + '-section').classList.add('active');
+            
+            // Add active to clicked button
+            event.target.closest('.nav-btn').classList.add('active');
+        }
+        
+        function toggleEdit(button) {
+            const userCard = button.closest('.user-card');
+            const editForm = userCard.querySelector('.edit-form');
+            
+            if (editForm.classList.contains('active')) {
+                editForm.classList.remove('active');
+                button.textContent = 'Edit';
+            } else {
+                editForm.classList.add('active');
+                button.textContent = 'Cancel';
+            }
+        }
+        
+        function toggleEditQuestion(button) {
+            const questionCard = button.closest('.item-card');
+            const editForm = questionCard.querySelector('.edit-form');
+            
+            if (editForm.classList.contains('active')) {
+                editForm.classList.remove('active');
+                button.textContent = 'Edit';
+            } else {
+                editForm.classList.add('active');
+                button.textContent = 'Cancel';
+            }
+        }
+        
+        function showQuestions(quizId) {
+            // Switch to questions section
+            showSection('questions');
+            
+            // Optionally pre-select the quiz in the dropdown
+            const quizSelect = document.getElementById('quizSelect');
+            if (quizSelect) {
+                quizSelect.value = quizId;
+            }
+            
+            console.log('Showing questions for quiz ID:', quizId);
+        }
+        
+        // Enhanced form validation for radio buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add validation for the main question form
+            const mainQuestionForm = document.getElementById('question-form');
+            if (mainQuestionForm) {
+                mainQuestionForm.addEventListener('submit', function(e) {
+                    const radioButtons = this.querySelectorAll('input[name="correctOption"]');
+                    const isChecked = Array.from(radioButtons).some(radio => radio.checked);
+                    
+                    if (!isChecked) {
+                        e.preventDefault();
+                        alert('Please select the correct answer option.');
+                        return false;
+                    }
+                    
+                    // Additional validation for empty options
+                    const options = this.querySelectorAll('input[name^="option"]');
+                    for (let option of options) {
+                        if (!option.value.trim()) {
+                            e.preventDefault();
+                            alert('Please fill in all answer options.');
+                            option.focus();
+                            return false;
+                        }
+                    }
+                    
+                    // Validate quiz selection
+                    const quizSelect = this.querySelector('select[name="quizId"]');
+                    if (!quizSelect.value) {
+                        e.preventDefault();
+                        alert('Please select a quiz.');
+                        quizSelect.focus();
+                        return false;
+                    }
+                    
+                    // Validate question text
+                    const questionText = this.querySelector('textarea[name="questionText"]');
+                    if (!questionText.value.trim()) {
+                        e.preventDefault();
+                        alert('Please enter a question.');
+                        questionText.focus();
+                        return false;
+                    }
+                });
+            }
+            
+            // Add validation for edit forms
+            const editForms = document.querySelectorAll('form[action*="/update"]');
+            editForms.forEach(form => {
+                if (form.querySelector('input[name="correctOption"]')) {
+                    form.addEventListener('submit', function(e) {
+                        const radioButtons = this.querySelectorAll('input[name="correctOption"]');
+                        const isChecked = Array.from(radioButtons).some(radio => radio.checked);
+                        
+                        if (!isChecked) {
+                            e.preventDefault();
+                            alert('Please select the correct answer option.');
+                            return false;
+                        }
+                    });
+                }
+            });
+        });
+        
+        // Add visual feedback for form submission
+        function showFormFeedback(form, message, isError = false) {
+            const existingFeedback = form.querySelector('.form-feedback');
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
+            
+            const feedback = document.createElement('div');
+            feedback.className = isError ? 'error-message form-feedback' : 'success-message form-feedback';
+            feedback.textContent = message;
+            
+            form.insertBefore(feedback, form.firstChild);
+            
+            setTimeout(() => {
+                feedback.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

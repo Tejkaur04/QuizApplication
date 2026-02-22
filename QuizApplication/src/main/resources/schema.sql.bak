@@ -1,0 +1,37 @@
+DROP TABLE IF EXISTS question;
+DROP TABLE IF EXISTS quiz;
+DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS user;
+
+CREATE TABLE user (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE category (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE quiz (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    description VARCHAR(1000),
+    category_id BIGINT,
+    CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES category(id)
+);
+
+CREATE TABLE question (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    text VARCHAR(1000) NOT NULL,
+    option_a VARCHAR(255),
+    option_b VARCHAR(255),
+    option_c VARCHAR(255),
+    option_d VARCHAR(255),
+    correct_option INT NOT NULL,
+    quiz_id BIGINT,
+    CONSTRAINT fk_quiz FOREIGN KEY (quiz_id) REFERENCES quiz(id)
+);
