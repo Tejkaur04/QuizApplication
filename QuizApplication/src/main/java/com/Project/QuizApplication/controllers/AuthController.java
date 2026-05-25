@@ -16,6 +16,11 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+	@GetMapping("/")
+	public String home() {
+    	return "redirect:/login";
+	}
+
     @GetMapping("/signup")
     public String showSignupForm(Model model) {
         model.addAttribute("user", new User());
