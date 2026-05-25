@@ -28,15 +28,17 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute User user, Model model) {
-        try {
-            authService.registerUser(user);
-            return "redirect:/login";
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("error", e.getMessage());
-            return "signup";
-        }
-    }
+	public String signup(@ModelAttribute User user, Model model) {
+    try {
+        user.setRole("USER");
+        authService.registerUser(user);
+        return "redirect:/login";
+    } catch (Exception e) {
+        e.printStackTrace();
+        model.addAttribute("error", e.getMessage());
+        return "signup";
+    	}
+	}
 
     @GetMapping("/login")
     public String showLoginForm(Model model) {
